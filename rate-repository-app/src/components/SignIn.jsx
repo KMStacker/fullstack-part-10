@@ -1,6 +1,7 @@
 import { TextInput, Pressable, View, StyleSheet } from 'react-native';
 import { useFormik } from 'formik';
 import Text from './Text';
+import * as yup from 'yup';
 
 const styles = StyleSheet.create({
   container: {
@@ -14,6 +15,9 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 10,
   },
+  inputError: {
+    borderColor: '#da2b3d',
+  },
   button: {
     backgroundColor: '#125096',
     padding: 10,
@@ -23,6 +27,15 @@ const styles = StyleSheet.create({
   buttonText: {
     color: '#ffffff',
   },
+  errorText: {
+    color: '#da2b3d',
+    marginBottom: 10,
+  },
+});
+
+const validationSchema = yup.object().shape({
+  username: yup.string().required('Username is required'),
+  password: yup.string().required('Password is required'),
 });
 
 const initialValues = {
@@ -37,6 +50,7 @@ const SignIn = () => {
 
   const formik = useFormik({
     initialValues,
+    validationSchema,
     onSubmit,
   });
 
@@ -46,17 +60,25 @@ const SignIn = () => {
         placeholder="Username"
         value={formik.values.username}
         onChangeText={formik.handleChange('username')}
-        style={styles.input}
+        onBlur={formik.handleBlur('username')}
+        style={[styles.input, formik.touched.username && formik.errors.username && styles.inputError]}
       />
+      {formik.touched.username && formik.errors.username && (
+        <Text style={styles.errorText}>{formik.errors.username}</Text>
+      )}
       <TextInput
         placeholder="Password"
         value={formik.values.password}
         onChangeText={formik.handleChange('password')}
+        onBlur={formik.handleBlur('password')}
         secureTextEntry
-        style={styles.input}
+        style={[styles.input, formik.touched.password && formik.errors.password && styles.inputError]}
       />
+      {formik.touched.password && formik.errors.password && (
+        <Text style={styles.errorText}>{formik.errors.password}</Text>
+      )}
       <Pressable onPress={formik.handleSubmit} style={styles.button}>
-        <Text style={styles.buttonText} >Sign in</Text>
+        <Text style={styles.buttonText}>Sign in</Text>
       </Pressable>
     </View>
   );
