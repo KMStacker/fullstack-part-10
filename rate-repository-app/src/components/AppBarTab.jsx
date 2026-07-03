@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import Text from './Text';
 
 const styles = StyleSheet.create({
@@ -12,11 +12,11 @@ const styles = StyleSheet.create({
 
 const AppBarTab = ({ text }) => {
   return (
-    <Pressable style={styles.tab}>
+    <View style={styles.tab}>
       <Text fontWeight="bold" fontSize="subheading" style={styles.text}>
         {text}
       </Text>
-    </Pressable>
+    </View>
   );
 };
 
