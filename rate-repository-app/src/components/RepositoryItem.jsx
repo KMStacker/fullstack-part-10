@@ -59,7 +59,7 @@ const RepositoryItem = ({ item, showGitHubButton = false }) => {
         <View style={styles.infoContainer}>
           <Text style={{ fontWeight: 'bold' }}>{item.fullName}</Text>
           <Text>{item.description}</Text>
-          <Text style={{ backgroundColor: '#0366d6', color: '#ffffff', alignSelf: 'flex-start', padding: 4, borderRadius: 4, marginTop: 4 }}>
+          <Text style={{ backgroundColor: '#125096 ', color: '#ffffff', alignSelf: 'flex-start', padding: 4, borderRadius: 4, marginTop: 4 }}>
             {item.language}
           </Text>
         </View>

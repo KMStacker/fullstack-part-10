@@ -5,6 +5,8 @@ import Text from './Text';
 import RepositoryItem from './RepositoryItem';
 import useRepository from '../hooks/useRepository';
 import theme from '../theme';
+import { useQuery } from '@apollo/client/react';
+import { GET_REPOSITORY } from '../graphql/queries';
 
 const styles = StyleSheet.create({
   separator: {
@@ -63,9 +65,32 @@ const ItemSeparator = () => <View style={styles.separator} />;
 
 const SingleRepository = () => {
   const { id } = useParams();
-  const { repository, loading } = useRepository(id);
+  const { data, loading, fetchMore, networkStatus } = useQuery(GET_REPOSITORY, {
+    variables: { id, first: 2 },
+    fetchPolicy: 'cache-and-network',
+    notifyOnNetworkStatusChange: true,
+  });
 
-  if (loading || !repository) {
+  const handleFetchMore = () => {
+    const canFetchMore = !loading && data?.repository?.reviews?.pageInfo?.hasNextPage;
+
+    if (!canFetchMore || networkStatus === 3) {
+      return;
+    }
+
+    fetchMore({
+      variables: {
+        after: data.repository.reviews.pageInfo.endCursor,
+        id,
+        first: 1,
+      },
+      
+    });
+  };
+  
+  const repository = data ? data.repository : undefined;
+
+  if (loading && !repository) {
     return (
       <View style={{ padding: 20 }}>
         <ActivityIndicator size="large" color="#125096" />
@@ -83,11 +108,13 @@ const SingleRepository = () => {
       renderItem={({ item }) => <ReviewItem review={item} />}
       keyExtractor={({ id }) => id}
       ItemSeparatorComponent={ItemSeparator}
-      ListHeaderComponent={() => (
+      ListHeaderComponent={
         <View style={{ marginBottom: 10 }}>
           <RepositoryItem item={repository} showGitHubButton />
         </View>
-      )}
+      }
+      onEndReached={handleFetchMore}
+      onEndReachedThreshold={0.5}
     />
   );
 };
